@@ -1,0 +1,33 @@
+{
+	"port" : "COM5",
+	"token" : "1234567890:abcdGEDFGhdjekwl-83jUme9cmw21139322",
+	"chatsWhiteList" : [0123456789],
+	"logPeriod" : 600,
+	"pollPeriod" : 2,
+	"devices" :
+		[
+			{
+				"type" : "dout",
+				"port" : 2,
+				"name" : "Кондиционер 1"
+			},
+			{
+				"type" : "dout",
+				"port" : 3,
+				"name" : "Кондиционер 2"
+			},
+			{
+				"type" : "ds18b20",
+				"port" : 14,
+				"name" : "Температура 1",
+				"adjust" : -3.0,
+				"alarms" : [{"on": 30, "off" : 29}, {"on": 27, "off" : 28}]
+			},
+			{
+				"type" : "ds18b20",
+				"port" : 15,
+				"name" : "Температура 2",
+				"adjust" : -3.0
+			}
+		]
+}
