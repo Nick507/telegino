@@ -11,6 +11,7 @@
 #define CMD_READ_INPUT_PORT        4
 #define CMD_READ_INPUT_PULLUP_PORT 5
 #define CMD_READ_DS18B20           6
+#define CMD_READ_EEPROM            7
 
 int digitalReadOutputPin(uint8_t pin)
 {
@@ -29,7 +30,7 @@ void setup()
   pinMode(LED_PORT, OUTPUT);
   digitalWrite(LED_PORT, LOW);
 
-  for(int i = 0; i < 16; i++)
+  for(int i = 2; i < 16; i++)
   {
     uint8_t b = EEPROM.read(i);
     cfg[i] = b;
@@ -63,12 +64,20 @@ void loop()
     uint8_t port = c & 0x0F;
     uint8_t cmd = c >> 4;
 
+
     if(cmd > CMD_READ_OUT_PORT && cmd <= CMD_READ_DS18B20)
     {
+      // protect RX/TX pins
+      if(port < 2)
+      {
+        Serial.write(0xFF);
+        return;
+      }
+
       if(cfg[port] != cmd)
       {
         EEPROM.write(port, cmd);
-        cfg[port] == cmd; // EEPROM.read(port) ?
+        cfg[port] = cmd; // EEPROM.read(port) ?
       }
     }
 
@@ -105,6 +114,16 @@ void loop()
           dt.begin();
           dt.requestTemperatures();
           Serial.println(dt.getTempCByIndex(0), 1);
+        }
+        break;
+      case CMD_READ_EEPROM:
+        for(int i = 0; i < 16; i++)
+        {
+          uint8_t b = EEPROM.read(i);
+          uint8_t n = b >> 4;
+          Serial.write(n > 9 ? n + 'A' - 10 : n + '0');
+          n = b & 0x0F;
+          Serial.write(n > 9 ? n + 'A' - 10 : n + '0');
         }
         break;
       default:
